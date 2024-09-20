@@ -25,11 +25,15 @@ jobs:
         run: ./gradlew clean build
       # NCP Container Registry 로그인
       - name: Log in to NCP Container Registry
-        run: echo "${{ secrets.NCP_PASSWORD }}" | docker login -u "${{ secrets.NCP_USER }}" --password-stdin ${NAVER_CLOUD_REGISTRY_URL}
-
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.NCP_CONTAINER_REGISTRY_URL }}
+          username: ${{ secrets.NCP_USER }}
+          password: ${{ secrets.NCP_PASSWORD }}
       # Docker 이미지 빌드 및 푸시
       - name: Build and Push Docker Image
-        run: |
-            docker build -t my-backend-app .
-            docker tag my-backend-app ${NAVER_CLOUD_REGISTRY_URL}/my-backend-app:latest
-            docker push ${NAVER_CLOUD_REGISTRY_URL}/my-backend-app:latest
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.NCP_CONTAINER_REGISTRY_URL }}/my-backend-app:latest
