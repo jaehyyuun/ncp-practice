@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-backend-app
+  namespace: dev
+spec:
+  replicas: 1 # 개발 환경은 1개의 Pod만 실행
+  selector:
+    matchLabels:
+      app: my-backend-app
+  template:
+    metadata:
+      labels:
+        app: my-backend-app
+    spec:
+      containers:
+        - name: my-backend-app
+          image: IMAGE_PLACEHOLDER/my-backend-app:latest
+          ports:
+            - containerPort: 8080
