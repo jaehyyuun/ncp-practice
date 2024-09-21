@@ -37,3 +37,28 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.NCP_CONTAINER_REGISTRY_URL }}/my-backend-app:latest
+
+      # kubectl 설정
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.27.0'
+
+      # Kubeconfig 파일을 사용하여 클러스터에 접근
+      - name: Configure kubectl with Naver Cloud
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+
+      # 배포 전에 deployment.yaml에서 IMAGE_PLACEHOLDER를 시크릿 값으로 치환
+      - name: Replace image placeholder in deployment file
+        run: sed -i 's|IMAGE_PLACEHOLDER|${{ secrets.NCP_CONTAINER_REGISTRY_URL }}|g' deployment.yaml
+
+      # Kubernetes에 Deployment 적용 - Dev 환경에
+      - name: Apply Kubernetes Deployment to Dev
+        run: |
+          kubectl apply -f deployment.yaml --namespace=dev
+
+      # Kubernetes에 Service 적용 - Dev 환경에
+      - name: Apply Kubernetes Service
+        run: |
+          kubectl apply -f service.yaml --namespace=dev
