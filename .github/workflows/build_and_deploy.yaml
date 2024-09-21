@@ -47,6 +47,7 @@ jobs:
       # Kubeconfig 파일을 사용하여 클러스터에 접근
       - name: Configure kubectl with Naver Cloud
         run: |
+          mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
       # 배포 전에 deployment.yaml에서 IMAGE_PLACEHOLDER를 시크릿 값으로 치환
