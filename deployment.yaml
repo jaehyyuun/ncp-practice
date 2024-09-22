@@ -4,7 +4,7 @@ metadata:
   name: my-backend-app
   namespace: dev
 spec:
-  replicas: 1 # 개발 환경은 1개의 Pod만 실행
+  replicas: 3 # 개발 환경은 3개의 Pod 실행
   selector:
     matchLabels:
       app: my-backend-app
@@ -18,3 +18,5 @@ spec:
           image: IMAGE_PLACEHOLDER/my-backend-app:latest
           ports:
             - containerPort: 8080
+      imagePullSecrets:
+        - name: ncp-registry-secret
