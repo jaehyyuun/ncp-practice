@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'zulu'
+          distribution: 'temurin'
       # Gradlew 실행 파일에 실행 권한 부여
       - name: Permission
         run: chmod +x ./gradlew
@@ -30,6 +30,7 @@ jobs:
           registry: ${{ secrets.NCP_CONTAINER_REGISTRY_URL }}
           username: ${{ secrets.NCP_USER }}
           password: ${{ secrets.NCP_PASSWORD }}
+
       # Docker 이미지 빌드 및 푸시
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
@@ -50,6 +51,14 @@ jobs:
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
+      - name: Check kubeconfig
+        run: cat $HOME/.kube/config
+
+      - name: Check Kubernetes Cluster Access
+        run: |
+          kubectl get nodes
+
+
       # 배포 전에 deployment.yaml에서 IMAGE_PLACEHOLDER를 시크릿 값으로 치환
       - name: Replace image placeholder in deployment file
         run: sed -i 's|IMAGE_PLACEHOLDER|${{ secrets.NCP_CONTAINER_REGISTRY_URL }}|g' deployment.yaml
@@ -59,7 +68,11 @@ jobs:
         run: |
           kubectl apply -f deployment.yaml --namespace=dev
 
+
+      
+
       # Kubernetes에 Service 적용 - Dev 환경에
       - name: Apply Kubernetes Service
         run: |
+          export PATH=$HOME/bin:$PATH 
           kubectl apply -f service.yaml --namespace=dev
