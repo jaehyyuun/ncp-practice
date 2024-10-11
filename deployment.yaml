@@ -18,5 +18,13 @@ spec:
           image: IMAGE_PLACEHOLDER/my-backend-app:latest
           ports:
             - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://mysql-service:3306/jaehyundb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: jaehyun1234
       imagePullSecrets:
         - name: ncp-registry-secret
+
