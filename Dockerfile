@@ -1,7 +1,7 @@
 FROM amazoncorretto:17
 
 # MySQL 클라이언트 설치
-RUN yum -y install mysql
+RUN yum -y update && yum -y install mysql && yum clean all
 
 
 ARG JAR_FILE=build/libs/*.jar
