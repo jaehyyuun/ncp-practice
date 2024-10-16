@@ -26,7 +26,13 @@ spec:
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql  # MySQL 데이터가 저장될 경로
+            - name: mysql-config-volume
+              mountPath: /etc/mysql/my.cnf # my.cnf 파일이 마운트될 경로
+              subPath: my.cnf  # ConfigMap에 포함된 my.cnf 파일만 마운트
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
-            claimName: mysql-pv-claim  # PVC 이름 설정
+            claimName: mysql-pv-claim  # PVC 이름
+        - name: mysql-config-volume  # MySQL 설정 파일 담는 ConfigMap
+          configMap:
+            name: mysql-config  # 생성한 ConfigMap 이름
